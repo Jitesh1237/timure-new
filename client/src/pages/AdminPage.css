@@ -1,0 +1,486 @@
+/* ─── ADMIN PAGE STYLES ─── */
+.admin-page {
+  font-family: "Hind", sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-title {
+  font-family: "Khand", sans-serif;
+  font-size: 2rem;
+  color: #d81f26;
+  margin-bottom: 24px;
+}
+
+.admin-header .admin-title {
+  margin-bottom: 0;
+}
+
+/* TABS */
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+.admin-tab {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 2px solid #2a2f3e;
+  background: #1a1d27;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: "Hind", sans-serif;
+}
+.admin-tab:hover {
+  border-color: #d81f26;
+  color: #d81f26;
+}
+.admin-tab.active {
+  background: #d81f26;
+  border-color: #d81f26;
+  color: #fff;
+}
+
+/* LOGIN */
+.login-box {
+  background: #1a1d27;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  margin: 60px auto;
+}
+.login-box h2 {
+  font-family: "Khand", sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #2a2f3e;
+  border-radius: 10px;
+  background: #12151f;
+  color: #e2e8f0;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  outline: none;
+}
+.login-box input:focus {
+  border-color: #d81f26;
+}
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #d81f26;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.login-box button:hover {
+  background: #a8151b;
+}
+.login-box button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.error-msg {
+  color: #f87171;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+.success-msg {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* UPLOAD FORM */
+.upload-box {
+  background: #1a1d27;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #2a2f3e;
+}
+.upload-box h3 {
+  font-family: "Khand", sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  color: #f4b43d;
+}
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.form-row input,
+.form-row select {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px;
+  border: 1.5px solid #2a2f3e;
+  border-radius: 8px;
+  background: #12151f;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+.form-row input:focus {
+  border-color: #d81f26;
+}
+.upload-btn {
+  background: #0b6b3a;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.upload-btn:hover {
+  background: #085029;
+}
+.upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.preview-img {
+  max-width: 200px;
+  border-radius: 8px;
+  margin-top: 12px;
+  border: 2px solid #2a2f3e;
+}
+
+/* SITE IMAGES */
+.site-image-row {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #2a2f3e;
+}
+.site-image-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.site-image-label {
+  font-family: "Khand", sans-serif;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+.site-image-inputs {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.site-image-inputs input[type="text"] {
+  flex: 1;
+  min-width: 300px;
+  padding: 10px;
+  border: 1.5px solid #2a2f3e;
+  border-radius: 8px;
+  background: #12151f;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  outline: none;
+}
+.site-image-inputs input[type="text"]:focus {
+  border-color: #d81f26;
+}
+.site-image-upload-btn {
+  padding: 10px 16px;
+  background: rgba(216, 31, 38, 0.15);
+  border: 1.5px solid rgba(216, 31, 38, 0.4);
+  color: #d81f26;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.site-image-upload-btn:hover {
+  background: rgba(216, 31, 38, 0.3);
+}
+.site-image-preview {
+  max-width: 300px;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 2px solid #2a2f3e;
+  display: block;
+}
+
+/* GALLERY LIST */
+.gallery-list {
+  display: grid;
+  gap: 16px;
+}
+.gallery-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #1a1d27;
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color 0.2s;
+}
+.gallery-item:hover {
+  border-color: #d81f26;
+}
+.gallery-item img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.gallery-item-info {
+  flex: 1;
+}
+.gallery-item-info h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.gallery-item-info p {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+.gallery-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.btn-edit,
+.btn-delete {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  font-size: 0.85rem;
+}
+.btn-edit {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+.btn-edit:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+.btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+.btn-logout {
+  background: rgba(216, 31, 38, 0.15);
+  border: 1.5px solid rgba(216, 31, 38, 0.4);
+  color: #d81f26;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-logout:hover {
+  background: rgba(216, 31, 38, 0.3);
+}
+.empty-msg {
+  text-align: center;
+  color: #64748b;
+  padding: 40px;
+  font-size: 1.1rem;
+}
+.status-active {
+  color: #4ade80;
+  font-weight: 600;
+}
+.status-inactive {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* ─── RESPONSIVE — TABLET & MOBILE ─── */
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 16px 12px;
+  }
+
+  .admin-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .admin-header .admin-title {
+    margin-bottom: 0;
+  }
+
+  /* TABS */
+  .admin-tabs {
+    gap: 6px;
+    margin: 14px 0;
+  }
+  .admin-tab {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  /* LOGIN */
+  .login-box {
+    padding: 24px 20px;
+    margin: 40px 12px;
+  }
+  .login-box h2 {
+    font-size: 1.2rem;
+  }
+  .login-box input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  /* UPLOAD FORM */
+  .upload-box {
+    padding: 16px;
+  }
+  .upload-box h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-row input,
+  .form-row select {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .upload-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 16px;
+  }
+
+  .preview-img {
+    max-width: 100%;
+  }
+
+  /* GALLERY ITEMS */
+  .gallery-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 180px;
+  }
+  .gallery-item-info h4 {
+    font-size: 0.95rem;
+  }
+  .gallery-item-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .btn-edit,
+  .btn-delete {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 0.8rem;
+    min-width: 0;
+  }
+
+  /* SITE IMAGES */
+  .site-image-row {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+  .site-image-label {
+    font-size: 0.95rem;
+  }
+  .site-image-inputs {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .site-image-inputs input[type="text"] {
+    min-width: unset;
+    width: 100%;
+  }
+  .site-image-upload-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .site-image-preview {
+    max-width: 100%;
+  }
+
+  .empty-msg {
+    padding: 24px 16px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-page {
+    padding: 12px 8px;
+  }
+
+  .admin-title {
+    font-size: 1.3rem;
+  }
+
+  .admin-tab {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  .login-box {
+    padding: 20px 16px;
+    margin: 30px 8px;
+  }
+
+  .upload-box {
+    padding: 14px;
+  }
+
+  .gallery-item img {
+    height: 150px;
+  }
+}

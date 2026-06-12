@@ -1,0 +1,21 @@
+# Node
+node_modules
+*.log
+
+# Build output
+dist
+dist-ssr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

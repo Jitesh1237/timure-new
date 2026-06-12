@@ -1,0 +1,19 @@
+# Database files
+database.db
+database.db-shm
+database.db-wal
+database.db-journal
+
+# Uploaded images
+uploads/*
+
+# Environment variables
+.env
+
+# Node
+node_modules
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
