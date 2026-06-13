@@ -15,6 +15,9 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Data directory - use DATA_DIR env var if set (for Railway volume mount), otherwise use server directory
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+
 // JWT Secret - MUST be set via environment variable in production
 if (!process.env.JWT_SECRET) {
   console.warn('⚠️  WARNING: JWT_SECRET environment variable not set! Using a weak default secret. Set JWT_SECRET in production!');
@@ -22,13 +25,13 @@ if (!process.env.JWT_SECRET) {
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-production-timure-yatayat-2024';
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Database setup
-const db = new Database(path.join(__dirname, 'database.db'));
+const db = new Database(path.join(DATA_DIR, 'database.db'));
 db.pragma('journal_mode = WAL');
 
 // Create tables
@@ -97,10 +100,13 @@ const loginLimiter = rateLimit({
 app.use(helmet({ contentSecurityPolicy: false })); // CSP disabled for SVG placeholder images
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 
 // Serve static frontend files (React build)
-app.use(express.static(path.join(__dirname, '../client/dist')));
+const clientDistPath = fs.existsSync(path.join(__dirname, '../client/dist'))
+  ? path.join(__dirname, '../client/dist')
+  : path.join(__dirname, '../dist');
+app.use(express.static(clientDistPath));
 
 // Multer config for image uploads
 const storage = multer.diskStorage({
@@ -263,7 +269,7 @@ app.put('/api/gallery/:id', authMiddleware, upload.single('image'), async (req, 
   if (req.file) {
     // Delete old file if it's a local upload
     if (existing.image_url.startsWith('/uploads/')) {
-      const oldPath = path.join(__dirname, existing.image_url);
+      const oldPath = path.join(DATA_DIR, existing.image_url.replace('/uploads/', ''));
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }
     try {
@@ -300,7 +306,7 @@ app.delete('/api/gallery/:id', authMiddleware, (req, res) => {
 
   // Delete file if local upload
   if (existing.image_url.startsWith('/uploads/')) {
-    const filePath = path.join(__dirname, existing.image_url);
+    const filePath = path.join(DATA_DIR, existing.image_url.replace('/uploads/', ''));
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   }
 
@@ -372,7 +378,7 @@ app.get('/api/placeholder/:width/:height', (req, res) => {
 
 // ==================== SPA FALLBACK ====================
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, '../client/dist/index.html');
+  const indexPath = path.join(clientDistPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {

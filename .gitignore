@@ -5,6 +5,7 @@ node_modules
 # Build output
 dist
 dist-ssr
+client/dist
 
 # OS files
 .DS_Store
@@ -19,3 +20,18 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database & uploads (managed by server)
+server/database.db
+server/database.db-wal
+server/database.db-shm
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Railway
+.railway
