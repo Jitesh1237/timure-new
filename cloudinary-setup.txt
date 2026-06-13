@@ -1,0 +1,68 @@
+============================================
+  CLOUDINARY SETUP (Free - 25GB storage)
+============================================
+
+STEP 1: Create Cloudinary Account
+1. Go to https://cloudinary.com
+2. Click "Sign Up For Free"
+3. Create account (no credit card needed)
+4. You'll see your Dashboard with credentials
+
+STEP 2: Get Your Credentials
+From your Cloudinary Dashboard, copy these 3 values:
+
+Cloud Name: (found at top of dashboard, e.g. "dxxxxxxx")
+API Key: (found under "Account Details")
+API Secret: (click "Reveal" to show it)
+
+STEP 3: Add These to Render
+Go to Render Dashboard → Your Service → Environment → Add:
+
+Key: CLOUDINARY_CLOUD_NAME
+Value: (your cloud name from Step 2)
+
+Key: CLOUDINARY_API_KEY
+Value: (your API key from Step 2)
+
+Key: CLOUDINARY_API_SECRET
+Value: (your API secret from Step 2)
+
+============================================
+  ALL RENDER ENV VARS (Complete List)
+============================================
+
+Key: JWT_SECRET
+Value: 6fbf14fc2cdf090aef5098186396dda8c232638872bcfff05863f0aa53218fbe
+
+Key: BASE_URL
+Value: https://timure-new.onrender.com
+(Replace with your actual Render URL)
+
+Key: NODE_ENV
+Value: production
+
+Key: CLOUDINARY_CLOUD_NAME
+Value: (your cloud name from Cloudinary dashboard)
+
+Key: CLOUDINARY_API_KEY
+Value: (your API key from Cloudinary dashboard)
+
+Key: CLOUDINARY_API_SECRET
+Value: (your API secret from Cloudinary dashboard)
+
+============================================
+  VERCEL ENV VAR (Frontend)
+============================================
+
+Key: VITE_API_URL
+Value: https://timure-new.onrender.com
+(Replace with your actual Render URL)
+
+============================================
+  WHAT HAPPENS
+============================================
+
+- Images uploaded via admin panel go to Cloudinary
+- Images persist forever (25GB free storage)
+- Gallery database still resets on Render free tier
+- If Cloudinary env vars are missing, falls back to local storage

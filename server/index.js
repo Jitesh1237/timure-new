@@ -11,6 +11,8 @@ const fs = require('fs');
 const sharp = require('sharp');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -53,7 +55,20 @@ if (!process.env.JWT_SECRET) {
 }
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-production-timure-yatayat-2024';
 
-// Ensure uploads directory exists
+// Cloudinary configuration
+const CLOUDINARY_ENABLED = process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET;
+if (CLOUDINARY_ENABLED) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+  console.log('☁️  Cloudinary configured for image uploads');
+} else {
+  console.log('⚠️  Cloudinary not configured. Images will use local storage (not persistent on Render).');
+}
+
+// Ensure uploads directory exists (used as temp storage and for Cloudinary fallback)
 const uploadsDir = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -138,14 +153,6 @@ const clientDistPath = fs.existsSync(path.join(__dirname, '../client/dist'))
 app.use(express.static(clientDistPath));
 
 // Multer config for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -157,11 +164,28 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
+// Use Cloudinary storage if configured, otherwise local disk
+let upload;
+if (CLOUDINARY_ENABLED) {
+  const cloudinaryStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: 'timure-yatayat',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      transformation: [{ width: 800, height: 500, crop: 'fill', quality: 'auto' }],
+    },
+  });
+  upload = multer({ storage: cloudinaryStorage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+} else {
+  const diskStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+  upload = multer({ storage: diskStorage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+}
 
 // Auth middleware
 function authMiddleware(req, res, next) {
@@ -228,20 +252,27 @@ async function resizeImage(filePath) {
   return resizedName;
 }
 
-// Upload an image, resize to 800x500, and return its URL
+// Upload an image and return its URL
 app.post('/api/upload', authMiddleware, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image file provided' });
   }
   try {
-    const resizedFilename = await resizeImage(req.file.path);
-    const imageUrl = toFullUrl(`/uploads/${resizedFilename}`);
+    let imageUrl;
+    if (CLOUDINARY_ENABLED && req.file.path) {
+      // Cloudinary storage — req.file.path is the Cloudinary URL
+      imageUrl = req.file.path;
+    } else if (req.file.path) {
+      // Local storage — resize and keep local
+      const resizedFilename = await resizeImage(req.file.path);
+      imageUrl = toFullUrl(`/uploads/${resizedFilename}`);
+    } else {
+      imageUrl = toFullUrl(`/uploads/${req.file.filename}`);
+    }
     res.json({ url: imageUrl });
   } catch (err) {
-    console.error('Image resize error:', err);
-    // Fallback: return original file URL if resize fails
-    const imageUrl = toFullUrl(`/uploads/${req.file.filename}`);
-    res.json({ url: imageUrl });
+    console.error('Image upload error:', err);
+    res.status(500).json({ error: 'Image upload failed' });
   }
 });
 
@@ -266,11 +297,13 @@ app.post('/api/gallery', authMiddleware, upload.single('image'), async (req, res
 
   let image_url;
   if (req.file) {
-    try {
+    // Cloudinary returns the URL in req.file.path
+    if (CLOUDINARY_ENABLED && req.file.path) {
+      image_url = req.file.path;
+    } else if (req.file.path) {
       const resizedFilename = await resizeImage(req.file.path);
       image_url = `/uploads/${resizedFilename}`;
-    } catch (err) {
-      console.error('Image resize error:', err);
+    } else {
       image_url = `/uploads/${req.file.filename}`;
     }
   } else if (req.body.image_url) {
@@ -297,16 +330,12 @@ app.put('/api/gallery/:id', authMiddleware, upload.single('image'), async (req, 
 
   let image_url = existing.image_url;
   if (req.file) {
-    // Delete old file if it's a local upload
-    if (existing.image_url.startsWith('/uploads/')) {
-      const oldPath = path.join(DATA_DIR, existing.image_url.replace('/uploads/', ''));
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    }
-    try {
+    if (CLOUDINARY_ENABLED && req.file.path) {
+      image_url = req.file.path;
+    } else if (req.file.path) {
       const resizedFilename = await resizeImage(req.file.path);
       image_url = `/uploads/${resizedFilename}`;
-    } catch (err) {
-      console.error('Image resize error:', err);
+    } else {
       image_url = `/uploads/${req.file.filename}`;
     }
   } else if (req.body.image_url) {
