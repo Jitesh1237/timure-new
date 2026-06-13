@@ -33,10 +33,19 @@ function getDataDir() {
       console.warn(`⚠️  DATA_DIR (${envDir}) is not writable: ${err.message}. Falling back to server directory.`);
     }
   }
-  console.log(`📁 Using fallback data directory: ${__dirname}`);
   return __dirname;
 }
 const DATA_DIR = getDataDir();
+
+// Base URL for generating full image URLs (needed when frontend is on a different domain)
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+// Helper to convert relative upload path to full URL
+function toFullUrl(relativePath) {
+  if (!relativePath) return relativePath;
+  if (relativePath.startsWith('http')) return relativePath;
+  return `${BASE_URL}${relativePath}`;
+}
 
 // JWT Secret - MUST be set via environment variable in production
 if (!process.env.JWT_SECRET) {
@@ -226,12 +235,12 @@ app.post('/api/upload', authMiddleware, upload.single('image'), async (req, res)
   }
   try {
     const resizedFilename = await resizeImage(req.file.path);
-    const imageUrl = `/uploads/${resizedFilename}`;
+    const imageUrl = toFullUrl(`/uploads/${resizedFilename}`);
     res.json({ url: imageUrl });
   } catch (err) {
     console.error('Image resize error:', err);
     // Fallback: return original file URL if resize fails
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = toFullUrl(`/uploads/${req.file.filename}`);
     res.json({ url: imageUrl });
   }
 });
@@ -241,13 +250,14 @@ app.post('/api/upload', authMiddleware, upload.single('image'), async (req, res)
 // Get all gallery images (public)
 app.get('/api/gallery', (req, res) => {
   const images = db.prepare('SELECT * FROM gallery WHERE is_active = 1 ORDER BY sort_order ASC, created_at DESC').all();
-  res.json(images);
+  // Ensure image URLs are full URLs for cross-origin access
+  res.json(images.map(img => ({ ...img, image_url: toFullUrl(img.image_url) })));
 });
 
 // Get all gallery images including inactive (admin)
 app.get('/api/gallery/all', authMiddleware, (req, res) => {
   const images = db.prepare('SELECT * FROM gallery ORDER BY sort_order ASC, created_at DESC').all();
-  res.json(images);
+  res.json(images.map(img => ({ ...img, image_url: toFullUrl(img.image_url) })));
 });
 
 // Upload and create gallery image
@@ -274,7 +284,7 @@ app.post('/api/gallery', authMiddleware, upload.single('image'), async (req, res
   ).run(title, caption || '', image_url, sort_order || 0, is_active !== undefined ? is_active : 1);
 
   const newImage = db.prepare('SELECT * FROM gallery WHERE id = ?').get(result.lastInsertRowid);
-  res.status(201).json(newImage);
+  res.status(201).json({ ...newImage, image_url: toFullUrl(newImage.image_url) });
 });
 
 // Update gallery image
