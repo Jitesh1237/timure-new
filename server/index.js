@@ -378,11 +378,12 @@ app.get('/api/placeholder/:width/:height', (req, res) => {
 
 // ==================== SPA FALLBACK ====================
 app.get('*', (req, res) => {
+  // In API-only mode (Render backend), no client dist exists — return JSON
   const indexPath = path.join(clientDistPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).json({ error: 'index.html not found' });
+    res.status(404).json({ error: 'Not found. This is an API-only server.' });
   }
 });
 

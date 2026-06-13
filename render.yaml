@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: timure-yatayat-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /data
+    disk:
+      name: timure-data
+      mountPath: /data
+      sizeGB: 1
