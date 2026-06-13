@@ -15,8 +15,28 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Data directory - use DATA_DIR env var if set (for Railway volume mount), otherwise use server directory
-const DATA_DIR = process.env.DATA_DIR || __dirname;
+// Data directory - use DATA_DIR env var if set (for Render/Railway volume mount), otherwise use server directory
+function getDataDir() {
+  const envDir = process.env.DATA_DIR;
+  if (envDir) {
+    try {
+      if (!fs.existsSync(envDir)) {
+        fs.mkdirSync(envDir, { recursive: true });
+      }
+      // Test write permission
+      const testFile = path.join(envDir, '.write-test');
+      fs.writeFileSync(testFile, 'test');
+      fs.unlinkSync(testFile);
+      console.log(`📁 Using DATA_DIR: ${envDir}`);
+      return envDir;
+    } catch (err) {
+      console.warn(`⚠️  DATA_DIR (${envDir}) is not writable: ${err.message}. Falling back to server directory.`);
+    }
+  }
+  console.log(`📁 Using fallback data directory: ${__dirname}`);
+  return __dirname;
+}
+const DATA_DIR = getDataDir();
 
 // JWT Secret - MUST be set via environment variable in production
 if (!process.env.JWT_SECRET) {
