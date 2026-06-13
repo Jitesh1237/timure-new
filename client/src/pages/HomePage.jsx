@@ -108,7 +108,6 @@ export default function HomePage() {
   // Fetch gallery
   useEffect(() => {
     fetchGallery()
-      .then(r => r.json())
       .then(imgs => { if (imgs && imgs.length) setGalleryImages(imgs); })
       .catch(() => {});
   }, []);
@@ -116,7 +115,6 @@ export default function HomePage() {
   // Fetch site settings (site images)
   useEffect(() => {
     fetchSettings()
-      .then(r => r.json())
       .then(data => { if (data && typeof data === 'object') setSiteSettings(data); })
       .catch(() => {});
   }, []);
