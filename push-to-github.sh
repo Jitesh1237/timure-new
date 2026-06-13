@@ -40,7 +40,7 @@ fi
 # Push to GitHub
 echo ""
 echo "🚀 Pushing to GitHub..."
-if git push https://${TOKEN}@github.com/jitesh1237/timure-new.git master --force; then
+if git push https://${TOKEN}@github.com/Jitesh1237/timure-new.git master --force; then
   echo ""
   echo "✅ Successfully pushed to GitHub!"
   echo ""
