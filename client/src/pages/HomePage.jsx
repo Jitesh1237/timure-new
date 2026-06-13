@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { fetchGallery, fetchSettings } from '../api';
 
 /* ═══════════════════════════════════════════════════
    EXACT TIMETABLE / FARE DATA (from original JS)
@@ -106,7 +107,7 @@ export default function HomePage() {
 
   // Fetch gallery
   useEffect(() => {
-    fetch('/api/gallery')
+    fetchGallery()
       .then(r => r.json())
       .then(imgs => { if (imgs && imgs.length) setGalleryImages(imgs); })
       .catch(() => {});
@@ -114,7 +115,7 @@ export default function HomePage() {
 
   // Fetch site settings (site images)
   useEffect(() => {
-    fetch('/api/settings')
+    fetchSettings()
       .then(r => r.json())
       .then(data => { if (data && typeof data === 'object') setSiteSettings(data); })
       .catch(() => {});
