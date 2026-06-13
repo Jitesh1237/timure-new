@@ -417,6 +417,12 @@ app.put('/api/settings', authMiddleware, (req, res) => {
   res.json({ message: 'Settings updated' });
 });
 
+// ==================== HEALTH CHECK ====================
+// Keep-alive endpoint — ping this every 5 minutes to prevent Render free tier spin-down
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), uptime: process.uptime() });
+});
+
 // ==================== PLACEHOLDER IMAGE ====================
 app.get('/api/placeholder/:width/:height', (req, res) => {
   const { width, height } = req.params;
