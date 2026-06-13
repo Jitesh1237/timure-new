@@ -325,7 +325,7 @@ app.put('/api/gallery/:id', authMiddleware, upload.single('image'), async (req, 
   );
 
   const updated = db.prepare('SELECT * FROM gallery WHERE id = ?').get(id);
-  res.json(updated);
+  res.json({ ...updated, image_url: toFullUrl(updated.image_url) });
 });
 
 // Delete gallery image
